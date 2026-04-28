@@ -1,214 +1,87 @@
-# 🌐 代理检查工具 (Proxy Checker)
+# Proxy Checker
 
-一个功能完整、生产级别的代理检查系统，支持从多个源自动获取代理、本地存储、质量检查、定时更新和详细的统计分析。
+一个轻量级的代理检查工具，支持本地 SOCKS5 代理服务。
 
-## ✨ 主要特性
+## 功能特性
 
-- **🌐 多源代理获取** - 从多个免费代理源自动获取
-- **💾 本地数据库** - JSON格式的本地存储管理
-- **⚡ 并发检查** - 支持异步并发检查代理质量
-- **📊 质量评级** - 五档质量评级系统（优/良/中/差/未知）
-- **⏰ 定时任务** - 自动化的计划任务系统
-- **📈 详细统计** - 按协议、质量、国家分类的统计分析
-- **🧹 自动清理** - 过期和低质代理自动清理
-- **📝 完整日志** - 详细的检查记录和错误追踪
+- 🌐 本地 SOCKS5 代理服务（监听 127.0.0.1:1080）
+- ✅ 代理连通性检查
+- 🔄 支持多种代理类型
 
-## 🚀 快速开始
+## 快速开始
 
-### 1. 安装依赖
+### 1. 启动本地代理服务
+
 ```bash
-pip install -r requirements.txt
+python local_proxy_server.py
 ```
 
-### 2. 获取代理
+输出示例：
+```
+✓ SOCKS5 代理已启动: 127.0.0.1:1080
+✓ 浏览器代理设置: 127.0.0.1:1080 (SOCKS5)
+✓ 等待连接...
+```
+
+### 2. 配置浏览器
+
+#### Chrome/Chromium
+1. 打开浏览器设置 → 系统 → 打开代理设置
+2. 配置 SOCKS 代理：
+   - 地址：`127.0.0.1`
+   - 端口：`1080`
+
+#### Firefox
+1. 设置 → 网络设置 → 网络代理 → 手动代理配置
+2. SOCKS 主机：`127.0.0.1`
+3. 端口：`1080`
+4. 勾选 "SOCKS v5"
+
+#### macOS/Linux
 ```bash
-python main.py fetch
+# 临时代理设置（仅当前终端）
+export all_proxy=socks5://127.0.0.1:1080
 ```
 
-### 3. 检查代理质量
+### 3. 测试代理连接
+
+浏览器访问任何网站，终端会显示连接日志：
+```
+[连接] 来自 127.0.0.1:xxxxx
+  → 目标: example.com:443
+  ✓ 连接已关闭
+```
+
+## 使用自定义端口
+
 ```bash
-python main.py check
+python local_proxy_server.py 8080  # 使用 8080 端口
 ```
 
-### 4. 查看代理列表
-```bash
-python main.py list
-```
-
-### 5. 查看统计信息
-```bash
-python main.py stats
-```
-
-### 6. 启动定时任务
-```bash
-python main.py schedule --foreground
-```
-
-## 📖 详细命令
-
-### 获取代理
-```bash
-python main.py fetch [--concurrent N]
-```
-
-### 检查质量
-```bash
-python main.py check [--concurrent N]
-```
-
-### 列出代理
-```bash
-python main.py list [--quality N] [--protocol PROTO] [--limit N]
-```
-
-### 统计信息
-```bash
-python main.py stats
-```
-
-### 清理代理
-```bash
-python main.py cleanup [--days N] [--quality N]
-```
-
-### 删除代理
-```bash
-python main.py delete --ip IP --port PORT [--protocol PROTO]
-```
-
-### 查看代理详情
-```bash
-python main.py info --ip IP --port PORT [--protocol PROTO]
-```
-
-### 启动调度器
-```bash
-python main.py schedule [--foreground]
-```
-
-### 立即运行任务
-```bash
-python main.py run [fetch|check|cleanup]
-```
-
-## ⚙️ 配置
-
-所有配置在 `config.py` 中，主要项目：
-
-### 代理源
-```python
-PROXY_SOURCES = {
-    "github_vakhov": "https://vakhov.github.io/fresh-proxy-list/http.txt",
-    "github_fyvri": "https://raw.githubusercontent.com/fyvri/fresh-proxy-list/main/http.txt",
-    "proxifly": "https://cdn.jsdelivr.net/gh/proxifly/free-proxy-list@main/proxies/http/data.json",
-}
-```
-
-### 定时任务
-```python
-SCHEDULE_JOBS = [
-    # 每日00:00更新代理
-    # 每30分钟检查代理质量
-    # 每日03:00清理过期代理
-]
-```
-
-### 质量评级
-```python
-QUALITY_LEVELS = {
-    5: (95, 100, "优"),
-    4: (80, 95, "良"),
-    3: (60, 80, "中"),
-    2: (30, 60, "差"),
-    1: (0, 30, "未知"),
-}
-```
-
-## 📁 项目结构
+## 项目结构
 
 ```
 proxy-checker/
-├── main.py                 # CLI主入口
-├── config.py              # 配置文件
-├── requirements.txt       # 依赖清单
-├── proxy_fetcher.py       # 代理获取
-├── proxy_storage.py       # 本地存储
-├── proxy_checker.py       # 质量检查
-├── scheduler.py           # 定时任务
-├── models/
-│   ├── __init__.py
-│   └── proxy.py          # 数据模型
-├── data/                  # 数据存储
-│   ├── proxies.json
-│   └── proxy_stats.json
-└── logs/                  # 日志
-    └── proxy_checks.log
+├── local_proxy_server.py    # 本地 SOCKS5 代理服务
+├── requirements.txt         # 项目依赖
+└── README.md               # 本文档
 ```
 
-## 💡 使用示例
+## 支持的功能
 
-### 获取代理并检查
-```bash
-# 获取代理
-python main.py fetch
+- ✅ SOCKS5 协议
+- ✅ IPv4/IPv6 支持
+- ✅ 域名解析
+- ✅ 实时连接日志
+- ✅ 双向数据转发
 
-# 检查质量
-python main.py check
+## 注意事项
 
-# 显示优质代理
-python main.py list --quality 4 --limit 20
-```
+- 默认仅监听本地接口 (`127.0.0.1`)，安全可靠
+- 不支持 SOCKS4、HTTP 代理（可扩展）
+- 需要 Python 3.6+
+- 无需外部依赖，仅使用 Python 标准库
 
-### 启动自动定时任务
-```bash
-# 前台运行（便于调试）
-python main.py schedule --foreground
+## 许可证
 
-# 后台运行
-python main.py schedule &
-```
-
-### 管理代理
-```bash
-# 查看代理详情
-python main.py info --ip 1.1.1.1 --port 8080
-
-# 删除代理
-python main.py delete --ip 1.1.1.1 --port 8080
-
-# 清理过期代理
-python main.py cleanup
-```
-
-## 📊 日志
-
-日志文件：`logs/proxy_checks.log`
-
-同时输出到控制台和文件，包含：
-- 代理获取信息
-- 质量检查结果
-- 错误和异常
-- 定时任务执行
-
-## 🔧 开发
-
-### 添加新的代理源
-
-在 `config.py` 中添加到 `PROXY_SOURCES`
-
-### 自定义检查URL
-
-修改 `config.py` 中的 `CHECK_URLS`
-
-### 添加新的定时任务
-
-在 `config.py` 中的 `SCHEDULE_JOBS` 添加任务配置
-
-## 📝 许可证
-
-MIT License
-
-## 👥 贡献
-
-欢迎提交 Issue 和 Pull Request！
+MIT

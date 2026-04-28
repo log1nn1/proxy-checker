@@ -207,11 +207,14 @@ def add_proxy(proxy: Proxy) -> bool:
 def add_proxies(proxies: List[Proxy]) -> int:
     return get_storage().add_proxies(proxies)
 
-def delete_proxy(ip: str, port: int, protocol: str = "http") -> bool:
-    return get_storage().delete_proxy(ip, port, protocol)
-
 def get_proxy(ip: str, port: int, protocol: str = "http") -> Optional[Proxy]:
     return get_storage().get_proxy(ip, port, protocol)
+
+def update_proxy(proxy: Proxy) -> bool:
+    return get_storage().update_proxy(proxy)
+
+def delete_proxy(ip: str, port: int, protocol: str = "http") -> bool:
+    return get_storage().delete_proxy(ip, port, protocol)
 
 def get_stats() -> Dict:
     return get_storage().get_stats()
